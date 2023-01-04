@@ -2,6 +2,7 @@ package com.udacity.project4.locationreminders.savereminder
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.android.gms.maps.model.PointOfInterest
 import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 
@@ -40,12 +41,38 @@ class SaveReminderViewModelTest {
     fun saveReminder() {
         saveReminderViewModel.saveReminder(listData[0])
         assert(saveReminderViewModel.showLoading.value == false)
+
+    }
+    @Test
+    fun failSaveReminder() {
+        saveReminderViewModel.saveReminder(listData[0])
+        assert(saveReminderViewModel.showLoading.value == false)
+        assert(saveReminderViewModel.showSnackBarInt.value == 1)
     }
 
     @Test
     fun validateAndSaveReminder() {
         saveReminderViewModel.validateAndSaveReminder(listData[0])
         assert(saveReminderViewModel.showLoading.value == false)
+    }
+    @Test
+    fun failValidateAndSaveReminder() {
+        saveReminderViewModel.validateAndSaveReminder(listData[0])
+        assert(saveReminderViewModel.showLoading.value == false)
+        assert(saveReminderViewModel.showSnackBarInt.value == 1)
+    }
+
+    @Test
+    fun savePoI() {
+        saveReminderViewModel.savePOI(PointOfInterest(null, null, null))
+        assert(saveReminderViewModel.showLoading.value == false)
+    }
+
+    @Test
+    fun failSavePoI() {
+        saveReminderViewModel.savePOI(PointOfInterest(null, null, null))
+        assert(saveReminderViewModel.showLoading.value == false)
+        assert(saveReminderViewModel.showSnackBarInt.value == 1)
     }
 
     @Test
