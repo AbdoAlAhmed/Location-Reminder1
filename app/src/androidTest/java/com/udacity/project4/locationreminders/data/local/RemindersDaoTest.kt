@@ -71,7 +71,28 @@ class RemindersDaoTest {
         assertThat(reminders.isEmpty(), `is`(true))
     }
 
+    @Test
+    fun getReminders() = runBlockingTest {
+        val reminder = ReminderDTO("title", "description", "location", 0.0, 0.0)
+        reminderDao.saveReminder(reminder)
 
+        val reminders = reminderDao.getReminders()
+
+        assertThat(reminders.isEmpty(), `is`(false))
+        assertThat(reminders.size, `is`(1))
+    }
+
+    // reminder doesn't exist
+
+    @Test
+    fun reminderDoesNotExist() = runBlockingTest {
+        val reminder = ReminderDTO("title", "description", "location", 0.0, 0.0)
+        reminderDao.saveReminder(reminder)
+
+        val loaded = reminderDao.getReminderById("2")
+
+        assert(loaded == null)
+    }
 
 
 }
