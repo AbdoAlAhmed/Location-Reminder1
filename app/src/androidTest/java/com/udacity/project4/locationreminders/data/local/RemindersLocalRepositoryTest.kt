@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.data.local
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.IdlingResource
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -30,13 +31,21 @@ class RemindersLocalRepositoryTest {
     private lateinit var database: RemindersDatabase
     private lateinit var repository: RemindersLocalRepository
 
+    // using idling resource to wait for the data to be loaded
+    private lateinit var idlingResource: IdlingResource
+
+    fun isIdlingResource(): IdlingResource? {
+        return idlingResource
+    }
+
     @Before
     fun initDb() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            RemindersDatabase::class.java
-        ).allowMainThreadQueries().build()
-        repository = RemindersLocalRepository(database.reminderDao(), Dispatchers.Main)
+        database = idlingResource.let {
+            Room.inMemoryDatabaseBuilder(
+                ApplicationProvider.getApplicationContext(),
+                RemindersDatabase::class.java
+            ).allowMainThreadQueries().build()
+        }
     }
 
     @After

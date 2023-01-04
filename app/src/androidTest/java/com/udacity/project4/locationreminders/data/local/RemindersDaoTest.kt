@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.data.local
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.IdlingResource
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.SmallTest;
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -33,13 +34,24 @@ class RemindersDaoTest {
     private lateinit var reminderDao: RemindersDao
 
 
+
+
+
+    // using idling resource to wait for the data to be loaded
+    private lateinit var idlingResource: IdlingResource
+    fun isIdlingResource(): IdlingResource? {
+        return idlingResource
+    }
+
+
     @Before
     fun initDb() {
-        database = Room.inMemoryDatabaseBuilder(
-            ApplicationProvider.getApplicationContext(),
-            RemindersDatabase::class.java
-        ).allowMainThreadQueries().build()
-        reminderDao = database.reminderDao()
+        database =  idlingResource.let {
+            Room.inMemoryDatabaseBuilder(
+                ApplicationProvider.getApplicationContext(),
+                RemindersDatabase::class.java
+            ).allowMainThreadQueries().build()
+        }
     }
 
     @After
@@ -60,7 +72,6 @@ class RemindersDaoTest {
         assertThat(loaded.latitude, `is`(reminder.latitude))
         assertThat(loaded.longitude, `is`(reminder.longitude))
     }
-
     @Test
     fun deleteAllReminders() = runBlockingTest {
         val reminder = ReminderDTO("title", "description", "location", 0.0, 0.0)
