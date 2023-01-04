@@ -10,7 +10,9 @@ class FakeDataSource : ReminderDataSource {
     var remindersServiceData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
      var shouldReturnError = false
 
-
+    fun setReturnError(value: Boolean) {
+        shouldReturnError = value
+    }
 
 
 
@@ -25,7 +27,6 @@ class FakeDataSource : ReminderDataSource {
         remindersServiceData[reminder.id] = reminder
     }
 
-
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
         if (shouldReturnError) {
             return Result.Error("Test exception")
@@ -35,6 +36,7 @@ class FakeDataSource : ReminderDataSource {
         }
         return Result.Error("Could not find task")
     }
+
 
     override suspend fun deleteAllReminders() {
         remindersServiceData.clear()

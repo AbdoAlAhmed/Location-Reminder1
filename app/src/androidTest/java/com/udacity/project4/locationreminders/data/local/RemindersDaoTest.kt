@@ -32,6 +32,7 @@ class RemindersDaoTest {
     private lateinit var database: RemindersDatabase
     private lateinit var reminderDao: RemindersDao
 
+
     @Before
     fun initDb() {
         database = Room.inMemoryDatabaseBuilder(
@@ -51,7 +52,7 @@ class RemindersDaoTest {
 
         val loaded = reminderDao.getReminderById(reminder.id)
 
-        assertThat<ReminderDTO>(loaded as ReminderDTO, notNullValue())
+        assertThat(loaded as ReminderDTO, notNullValue())
         assertThat(loaded.id, `is`(reminder.id))
         assertThat(loaded.title, `is`(reminder.title))
         assertThat(loaded.description, `is`(reminder.description))

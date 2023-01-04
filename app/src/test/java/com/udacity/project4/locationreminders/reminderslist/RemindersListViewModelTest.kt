@@ -31,8 +31,7 @@ class RemindersListViewModelTest {
     @Before
     fun setupViewModel() {
         fakeRepo = FakeDataSource()
-        remindersListViewModel =
-            RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeRepo)
+        remindersListViewModel = RemindersListViewModel(ApplicationProvider.getApplicationContext(), fakeRepo)
     }
 
     @Test
@@ -49,13 +48,13 @@ class RemindersListViewModelTest {
     }
 
     @Test
-    fun loadReminders_showNoData() = runBlockingTest {
-        fakeRepo.shouldReturnError = true
-        remindersListViewModel.loadReminders()
-        MatcherAssert.assertThat(
-            remindersListViewModel.showSnackBar.getOrAwaitValue(), CoreMatchers.`is`("Fail to load data")
-        )
-    }
+     fun loadReminders_showNoData() = coroutineRule.runBlockingTest {
+          fakeRepo.deleteAllReminders()
+          remindersListViewModel.loadReminders()
+          MatcherAssert.assertThat(
+                remindersListViewModel.showNoData.getOrAwaitValue(), CoreMatchers.`is`(true)
+          )
+     }
 
 
     @Test
@@ -66,5 +65,16 @@ class RemindersListViewModelTest {
             remindersListViewModel.remindersList.getOrAwaitValue().size, CoreMatchers.`is`(3)
         )
     }
+
+    @Test
+    fun loadReminders_showError() = runBlockingTest {
+        fakeRepo.shouldReturnError = true
+        remindersListViewModel.loadReminders()
+        MatcherAssert.assertThat(
+            remindersListViewModel.showSnackBar.getOrAwaitValue(), CoreMatchers.`is`("Test exception")
+        )
+    }
+
+
 
 }
