@@ -64,7 +64,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             _viewModel.reminderSelectedLocationStr.value = POI.name
             _viewModel.navigationCommand.value = NavigationCommand.Back
         }catch (e: Exception){
-            Toast.makeText(context, "someThing Wrong: ${e.message}", Toast.LENGTH_SHORT).show()
+           Snackbar.make(binding.root, "Please select a location", Snackbar.LENGTH_LONG).show()
             Log.e("", "someThing Wrong: ${e.message}")
         }
     }

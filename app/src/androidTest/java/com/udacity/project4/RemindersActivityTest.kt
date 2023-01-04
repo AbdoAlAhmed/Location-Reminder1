@@ -1,9 +1,16 @@
 package com.udacity.project4
 
 import android.app.Application
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
@@ -11,6 +18,7 @@ import com.udacity.project4.locationreminders.reminderslist.RemindersListViewMod
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -65,7 +73,64 @@ class RemindersActivityTest :
         }
     }
 
+    @Test
+    fun askForSelectPIO() = runBlocking {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
 
-//    TODO: add End to End testing to the app
+        //click on the FAB
+        Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())
+
+        //enter the title
+        Espresso.onView(ViewMatchers.withId(R.id.reminderTitle))
+            .perform(ViewActions.typeText("Title"))
+
+        //enter the description
+        Espresso.onView(ViewMatchers.withId(R.id.reminderDescription))
+            .perform(ViewActions.typeText("Description"))
+
+        //enter the location
+        Espresso.onView(ViewMatchers.withId(R.id.selectLocation)).perform(ViewActions.click())
+
+        //click on the map
+        Espresso.onView(ViewMatchers.withId(R.id.map)).perform(ViewActions.click())
+
+        //click on the save button
+        Espresso.onView(withId(R.id.btn_save_location)).perform(ViewActions.click())
+        // check toast message is displayed
+        Espresso.onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(ViewAssertions.matches(ViewMatchers.withText("Please select a location")))
+
+
+
+
+        activityScenario.close()
+
+
+    }
+    @Test
+    fun failToSave(){
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        // click on the FAB
+        Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())
+        //enter the title
+        Espresso.onView(ViewMatchers.withId(R.id.reminderTitle))
+            .perform(ViewActions.typeText("Title"))
+        // enter the description
+        Espresso.onView(ViewMatchers.withId(R.id.reminderDescription))
+            .perform(ViewActions.typeText("Description"))
+//       // click on the layout to remove the keyboard
+//        onView(withId(R.id.fragment_save_reminder)).perform(click())
+        // dismiss the keyboard
+        Espresso.onView(withId(R.id.fragment_save_reminder))
+            .perform(ViewActions.closeSoftKeyboard())
+        // click on the save button
+        Espresso.onView(ViewMatchers.withId(R.id.saveReminder)).perform(ViewActions.click())
+        // check snackbar is displayed
+        Espresso.onView(ViewMatchers.withId(com.google.android.material.R.id.snackbar_text))
+            .check(ViewAssertions.matches(ViewMatchers.withText(R.string.no_data)))
+        activityScenario.close()
+
+    }
+
 
 }
