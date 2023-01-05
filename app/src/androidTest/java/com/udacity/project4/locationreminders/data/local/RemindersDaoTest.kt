@@ -35,8 +35,6 @@ class RemindersDaoTest {
 
 
 
-
-
     // using idling resource to wait for the data to be loaded
     private lateinit var idlingResource: IdlingResource
     fun isIdlingResource(): IdlingResource? {
